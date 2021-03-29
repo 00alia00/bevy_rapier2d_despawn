@@ -1,0 +1,11 @@
+[package]
+name = "bevy_rapier2d_despawn"
+version = "0.1.0"
+authors = ["Alia <alia.mccutcheon@gmail.com>"]
+edition = "2018"
+
+[dependencies]
+bevy = "*" 
+bevy_rapier2d = { version = "*", features = [ "simd-stable", "parallel" ] }
+
+rust-hsluv = "0.1.4"
