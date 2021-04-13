@@ -7,7 +7,7 @@ use hsluv::*;
 use bevy_rapier2d::{na::{Isometry2, Vector2}, physics::{
     EventQueue, RapierConfiguration, RapierPhysicsPlugin, RigidBodyHandleComponent}, 
     rapier::{
-        dynamics::RigidBodySet, 
+        dynamics::RigidBodySet,  dynamics::JointSet, 
         geometry::{ColliderSet, ContactEvent}}};
 use bevy_rapier2d::rapier::dynamics::RigidBodyBuilder;
 use bevy_rapier2d::rapier::geometry::ColliderBuilder;
