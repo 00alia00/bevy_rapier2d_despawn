@@ -66,6 +66,9 @@ fn setup_rapier( mut rapier_config: ResMut<RapierConfiguration>) {
     // to prevent float rounding problems. To do this, we set the scale factor in RapierConfiguration
     // and divide our sprite_size by the scale.
      rapier_config.scale = RAPIER_SCALE;
+
+     // Use frame rate indipendent physics
+     rapier_config.time_dependent_number_of_timesteps = true;
 }
 
 fn setup_ui(commands: &mut Commands, asset_server: Res<AssetServer>){
@@ -290,14 +293,14 @@ fn check_collision_events(
 
                     if t0bits == PhysicsEntityType::Brick as u64{
                         commands.despawn(e0);
-                        colliders.remove(c0, &mut bodies, false);
-                       
+                        bodies.remove(collider0.parent(), &mut colliders, &mut JointSet::new());
+                         
                         // Do something fun like add to the score or whatever
                         score.score += 10;
                     }
                     else if t1bits == PhysicsEntityType::Brick as u64{
                         commands.despawn(e1);
-                        colliders.remove(c0, &mut bodies, false);
+                        bodies.remove(collider1.parent(), &mut colliders, &mut JointSet::new());
 
                         // Do something fun like add to the score or whatever
                         score.score += 10;

@@ -4,6 +4,10 @@ version = "0.1.0"
 authors = ["Alia <alia.mccutcheon@gmail.com>"]
 edition = "2018"
 
+[profile.release.build-override]
+opt-level = 3
+debug = true
+
 [dependencies]
 bevy = "*" 
 bevy_rapier2d = { version = "*", features = [ "simd-stable", "parallel" ] }
