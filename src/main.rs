@@ -1,17 +1,17 @@
-use bevy::{core::FixedTimestep, prelude::*, render::pass::ClearColor};
-use hsluv::*;
+use bevy::{prelude::*, render::pass::ClearColor};
 
-use bevy_rapier2d::rapier::dynamics::RigidBodyBuilder;
-use bevy_rapier2d::rapier::geometry::ColliderBuilder;
 use bevy_rapier2d::{
     na::{Isometry2, Vector2},
     physics::{EventQueue, RapierConfiguration, RapierPhysicsPlugin, RigidBodyHandleComponent},
     rapier::{
         dynamics::JointSet,
+        dynamics::RigidBodyBuilder,
         dynamics::RigidBodySet,
+        geometry::ColliderBuilder,
         geometry::{ColliderSet, ContactEvent},
     },
 };
+use hsluv::*;
 
 const BAT_WIDTH: f32 = 40.0;
 const BAT_HEIGHT: f32 = 5.0;
@@ -27,7 +27,6 @@ const BAT_TEXTURE: &str = "png/bat.png";
 const BRICK_TEXTURE: &str = "png/brick.png";
 
 const FONT: &str = "fonts/FiraSans-Bold.ttf";
-const TIME_STEP: f32 = 1.0 / 60.0;
 
 fn main() {
     App::build()
@@ -49,15 +48,8 @@ fn main() {
         .add_startup_system(spawn_bricks.system())
         .add_startup_system(spawn_ball.system())
         .add_startup_system(spawn_bat.system())
-        // Running
-        .add_system_set(
-            SystemSet::new()
-                .with_run_criteria(FixedTimestep::step(TIME_STEP as f64))
-                .with_system(player_movement_rapier_system.system())
-                // Add the collision checks
-                // TODO: Figure out how to force this to be executed last
-                .with_system(check_collision_events.system()),
-        )
+        .add_system_to_stage(CoreStage::Update, player_movement_rapier_system.system())
+        .add_system_to_stage(CoreStage::PostUpdate, check_collision_events.system())
         .add_system(scoring_system.system())
         .run();
 }
@@ -312,12 +304,12 @@ fn spawn_bricks(
             )));
 
             let collider = ColliderBuilder::cuboid(
-                    (brick_size.x / RAPIER_SCALE) / 2.0,
-                    (brick_size.y / RAPIER_SCALE) / 2.0,
-                )
-                .restitution(1.0)
-                // Set the user data: first 64 bits is the entity type and the second 64 bits is the entity ID
-                .user_data((entity.id().to_bits() as u128) << 64 | PhysicsEntityType::Brick as u128);
+                (brick_size.x / RAPIER_SCALE) / 2.0,
+                (brick_size.y / RAPIER_SCALE) / 2.0,
+            )
+            .restitution(1.0)
+            // Set the user data: first 64 bits is the entity type and the second 64 bits is the entity ID
+            .user_data((entity.id().to_bits() as u128) << 64 | PhysicsEntityType::Brick as u128);
 
             entity.insert(collider);
         }
